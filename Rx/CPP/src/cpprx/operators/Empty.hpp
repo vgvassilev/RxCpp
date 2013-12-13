@@ -34,9 +34,10 @@ namespace rxcpp
                 {
                     auto local = parent;
                     auto that = this->shared_from_this();
+                    auto local_observer = SinkBase::observer;
                     return parent->scheduler->Schedule(
                         [=](Scheduler::shared) -> Disposable {
-                            that->SinkBase::observer->OnCompleted();
+                            local_observer->OnCompleted();
                             that->SinkBase::Dispose();
                             return Disposable::Empty();
                     });

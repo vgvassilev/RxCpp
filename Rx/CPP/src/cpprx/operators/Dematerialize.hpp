@@ -39,14 +39,16 @@ private:
 
         virtual void OnNext(const std::shared_ptr<Notification<T>>& n)
         {
-        	n->Accept([this](const T& t){
-	            this->SinkBase::observer->OnNext(t);
-        	}, [this](){
-	            this->SinkBase::observer->OnCompleted();
-	            this->SinkBase::Dispose();
-        	}, [this](const std::exception_ptr& e){
-	            this->SinkBase::observer->OnError(e);
-	            this->SinkBase::Dispose();
+            auto that = this->shared_from_this();
+            auto local_observer = SinkBase::observer;
+        	n->Accept([=](const T& t){
+	            local_observer->OnNext(t);
+        	}, [=](){
+	            local_observer->OnCompleted();
+	            that->SinkBase::Dispose();
+        	}, [=](const std::exception_ptr& e){
+	            local_observer->OnError(e);
+	            that->SinkBase::Dispose();
         	});
         }
         virtual void OnCompleted()
