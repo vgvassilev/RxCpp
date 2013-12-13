@@ -1,7 +1,7 @@
 language: cpp
 
 compiler:
-  - clang
+  - clang-3.4
 
 env:
   - BUILD_TYPE=Debug
@@ -10,7 +10,7 @@ env:
 before_install:
   - git submodule update --init --recursive
   - sudo apt-get -qq update
-  - sudo apt-get -qq install libc++-dev
+  - sudo apt-get -qq install clang-3.4 libc++-dev
 
 install:
   - cmake -Hprojects/CMake -BBuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE
