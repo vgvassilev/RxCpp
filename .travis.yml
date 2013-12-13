@@ -1,11 +1,17 @@
 language: cpp
 
 compiler:
+  - gcc-4.8
   - clang
 
 env:
   - BUILD_TYPE=Debug
   - BUILD_TYPE=Release
+
+before_install:
+  - git submodule update --init --recursive
+  - sudo apt-get -qq update
+  - sudo apt-get -qq install g++-4.8
 
 install:
   - cmake -Hprojects/CMake -BBuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE
