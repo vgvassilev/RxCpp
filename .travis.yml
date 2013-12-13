@@ -1,7 +1,6 @@
 language: cpp
 
 compiler:
-  - gcc-4.8
   - clang
 
 env:
@@ -11,7 +10,7 @@ env:
 before_install:
   - git submodule update --init --recursive
   - sudo apt-get -qq update
-  - sudo apt-get -qq install g++-4.8
+  - sudo apt-get -qq install libc++-dev
 
 install:
   - cmake -Hprojects/CMake -BBuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE
