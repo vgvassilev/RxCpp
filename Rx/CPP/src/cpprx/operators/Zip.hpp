@@ -151,13 +151,10 @@ namespace rxcpp
         )
     -> std::shared_ptr<Observable<typename std::result_of<S(const ZipSource&...)>::type>>
     {
-        typedef typename std::result_of<S(const ZipSource&...)>::type result_type;
-        typedef std::tuple<std::shared_ptr<Observable<ZipSource>>...> Sources;
-        typedef std::tuple<std::pair<bool, std::queue<ZipSource>>...> Queues;
         struct State {
-            typedef Queues Queues;
-            typedef Sources Sources;
-            typedef result_type result_type;
+            typedef typename std::result_of<S(const ZipSource&...)>::type result_type;
+            typedef std::tuple<std::shared_ptr<Observable<ZipSource>>...> Sources;
+            typedef std::tuple<std::pair<bool, std::queue<ZipSource>>...> Queues;
             typedef std::tuple_size<Sources> SourcesSize;
             explicit State(S selector) 
                 : selector(std::move(selector))
@@ -168,11 +165,11 @@ namespace rxcpp
             Queues queues;
             bool isStopped;
         };
-        Sources sources(source...);
+        State::Sources sources(source...);
         // bug on osx prevents using make_shared 
         std::shared_ptr<State> state(new State(std::move(selector)));
-        return CreateObservable<result_type>(
-            [=](std::shared_ptr<Observer<result_type>> observer) -> Disposable
+        return CreateObservable<State::result_type>(
+            [=](std::shared_ptr<Observer<State::result_type>> observer) -> Disposable
             {
                 ComposableDisposable cd;
                 cd.Add(Disposable([state](){state->isStopped = true;}));
@@ -189,13 +186,10 @@ namespace rxcpp
         )
     -> std::shared_ptr<Observable<typename std::result_of<S(const ZipSource1&, const ZipSource2&)>::type>>
     {
-        typedef typename std::result_of<S(const ZipSource1&, const ZipSource2&)>::type result_type;
-        typedef std::tuple<std::shared_ptr<Observable<ZipSource1>>, std::shared_ptr<Observable<ZipSource2>>> Sources;
-        typedef std::tuple<std::pair<bool, std::queue<ZipSource1>>, std::pair<bool, std::queue<ZipSource2>>> Queues;
         struct State {
-            typedef Queues Queues;
-            typedef Sources Sources;
-            typedef result_type result_type;
+            typedef typename std::result_of<S(const ZipSource1&, const ZipSource2&)>::type result_type;
+            typedef std::tuple<std::shared_ptr<Observable<ZipSource1>>, std::shared_ptr<Observable<ZipSource2>>> Sources;
+            typedef std::tuple<std::pair<bool, std::queue<ZipSource1>>, std::pair<bool, std::queue<ZipSource2>>> Queues;
             typedef std::tuple_size<Sources> SourcesSize;
             explicit State(S selector) 
                 : selector(std::move(selector))
@@ -206,11 +200,11 @@ namespace rxcpp
             Queues queues;
             bool isStopped;
         };
-        Sources sources(source1, source2);
+        State::Sources sources(source1, source2);
         // bug on osx prevents using make_shared 
         std::shared_ptr<State> state(new State(std::move(selector)));
-        return CreateObservable<result_type>(
-            [=](std::shared_ptr<Observer<result_type>> observer) -> Disposable
+        return CreateObservable<State::result_type>(
+            [=](std::shared_ptr<Observer<State::result_type>> observer) -> Disposable
             {
                 ComposableDisposable cd;
                 detail::ZipSubscriber<0, State::SourcesSize::value, State>::subscribe(cd, observer, state, sources);

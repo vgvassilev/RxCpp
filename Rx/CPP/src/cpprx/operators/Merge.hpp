@@ -60,22 +60,20 @@ namespace rxcpp
         const std::shared_ptr<Observable<MergeSourceNext>>&... otherSource
         )
     {
-        typedef MergeSource result_type;
-        typedef decltype(std::make_tuple(firstSource, otherSource...)) Sources;
         struct State {
-            typedef Sources Sources;
-            typedef result_type result_type;
+            typedef MergeSource result_type;
+            typedef decltype(std::make_tuple(firstSource, otherSource...)) Sources;
             typedef std::tuple_size<Sources> SourcesSize;
             State()
                 : pendingComplete(SourcesSize::value)
             {}
             std::atomic<size_t> pendingComplete;
         };
-        Sources sources(firstSource, otherSource...);
+        State::Sources sources(firstSource, otherSource...);
         // bug on osx prevents using make_shared
         std::shared_ptr<State> state(new State());
-        return CreateObservable<result_type>(
-            [=](std::shared_ptr<Observer<result_type>> observer) -> Disposable
+        return CreateObservable<State::result_type>(
+            [=](std::shared_ptr<Observer<State::result_type>> observer) -> Disposable
             {
                 ComposableDisposable cd;
                 detail::MergeSubscriber<0, State::SourcesSize::value, State>::subscribe(cd, observer, state, sources);
@@ -89,22 +87,20 @@ namespace rxcpp
         const std::shared_ptr<Observable<MergeSourceNext>>& otherSource
         )
     {
-        typedef MergeSource result_type;
-        typedef decltype(std::make_tuple(firstSource, otherSource)) Sources;
         struct State {
-            typedef Sources Sources;
-            typedef result_type result_type;
+            typedef MergeSource result_type;
+            typedef decltype(std::make_tuple(firstSource, otherSource)) Sources;
             typedef std::tuple_size<Sources> SourcesSize;
             State()
                 : pendingComplete(SourcesSize::value)
             {}
             std::atomic<size_t> pendingComplete;
         };
-        Sources sources(firstSource, otherSource);
+        State::Sources sources(firstSource, otherSource);
         // bug on osx prevents using make_shared
         std::shared_ptr<State> state(new State());
-        return CreateObservable<result_type>(
-            [=](std::shared_ptr<Observer<result_type>> observer) -> Disposable
+        return CreateObservable<State::result_type>(
+            [=](std::shared_ptr<Observer<State::result_type>> observer) -> Disposable
             {
                 ComposableDisposable cd;
                 detail::MergeSubscriber<0, State::SourcesSize::value, State>::subscribe(cd, observer, state, sources);

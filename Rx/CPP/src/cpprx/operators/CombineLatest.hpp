@@ -84,14 +84,11 @@ namespace rxcpp
         )
     -> std::shared_ptr<Observable<typename std::result_of<S(const CombineLSource&...)>::type>>
     {
-        typedef typename std::result_of<S(const CombineLSource&...)>::type result_type;
-        typedef std::tuple<std::shared_ptr<Observable<CombineLSource>>...> Sources;
-        typedef std::tuple<CombineLSource...> Latest;
-        typedef decltype(std::make_tuple((source, true)...)) LatestValid;
         struct State {
-            typedef Latest Latest;
-            typedef Sources Sources;
-            typedef result_type result_type;
+            typedef typename std::result_of<S(const CombineLSource&...)>::type result_type;
+            typedef std::tuple<std::shared_ptr<Observable<CombineLSource>>...> Sources;
+            typedef std::tuple<CombineLSource...> Latest;
+            typedef decltype(std::make_tuple((source, true)...)) LatestValid;
             typedef std::tuple_size<Sources> SourcesSize;
             explicit State(S selector) 
                 : latestValid()
@@ -106,11 +103,11 @@ namespace rxcpp
             S selector;
             Latest latest;
         };
-        Sources sources(source...);
+        State::Sources sources(source...);
         // bug on osx prevents using make_shared 
         std::shared_ptr<State> state(new State(selector));
-        return CreateObservable<result_type>(
-            [=](std::shared_ptr<Observer<result_type>> observer) -> Disposable
+        return CreateObservable<State::result_type>(
+            [=](std::shared_ptr<Observer<State::result_type>> observer) -> Disposable
             {
                 ComposableDisposable cd;
                 cd.Add(Disposable([state](){state->done = true;}));
@@ -127,14 +124,11 @@ namespace rxcpp
         )
     -> std::shared_ptr<Observable<typename std::result_of<S(const CombineLSource1&, const CombineLSource2&)>::type>>
     {
-        typedef typename std::result_of<S(const CombineLSource1&, const CombineLSource2&)>::type result_type;
-        typedef std::tuple<std::shared_ptr<Observable<CombineLSource1>>, std::shared_ptr<Observable<CombineLSource2>>> Sources;
-        typedef std::tuple<CombineLSource1, CombineLSource2> Latest;
-        typedef std::tuple<bool, bool> LatestValid;
         struct State {
-            typedef Latest Latest;
-            typedef Sources Sources;
-            typedef result_type result_type;
+            typedef typename std::result_of<S(const CombineLSource1&, const CombineLSource2&)>::type result_type;
+            typedef std::tuple<std::shared_ptr<Observable<CombineLSource1>>, std::shared_ptr<Observable<CombineLSource2>>> Sources;
+            typedef std::tuple<CombineLSource1, CombineLSource2> Latest;
+            typedef std::tuple<bool, bool> LatestValid;
             typedef std::tuple_size<Sources> SourcesSize;
             explicit State(S selector) 
                 : latestValid()
@@ -149,11 +143,11 @@ namespace rxcpp
             S selector;
             Latest latest;
         };
-        Sources sources(source1, source2);
+        State::Sources sources(source1, source2);
         // bug on osx prevents using make_shared 
         std::shared_ptr<State> state(new State(std::move(selector)));
-        return CreateObservable<result_type>(
-            [=](std::shared_ptr<Observer<result_type>> observer) -> Disposable
+        return CreateObservable<State::result_type>(
+            [=](std::shared_ptr<Observer<State::result_type>> observer) -> Disposable
             {
                 ComposableDisposable cd;
                 cd.Add(Disposable([state](){state->done = true;}));
