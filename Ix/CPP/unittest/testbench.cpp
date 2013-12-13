@@ -11,10 +11,6 @@
 
 #include <ctime>
 
-#include <boost/lambda/core.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/iterator.hpp>
-
 #include "cpplinq/linq.hpp"
 
 #include "testbench.hpp"
@@ -172,38 +168,6 @@ TEST(test_where_modification)
 
     // non-primes < 100
     VERIFY_EQ(3890, result);
-}
-
-TEST(test_where_any)
-{
-    using namespace boost::lambda;
-
-    vector<int> xs(200);
-    fill(begin(xs), end(xs), int(0));
-    auto it = xs.begin();
-    *it = 2;
-
-    for(;;) {
-        auto last = *it++;
-        auto primes = from(int_range(last+1, -1))
-                      .where([&](int x){ 
-                                 return from(begin(xs), it)
-                                       //.all([&](int d){return x%d;});
-                                       .all(x % boost::lambda::_1);
-                             });
-        *it = *primes.begin();
-        if ((*it)>=100) {
-            break;
-        }
-    };
-    xs.erase(it, xs.end());
-
-    auto result = accumulate(begin(xs), end(xs), int(0));
-
-    //display(begin(xs), end(xs));
-
-    // primes < 100
-    VERIFY_EQ(1060, result);
 }
 
 TEST(test_take)

@@ -19,8 +19,14 @@ set(TEST_DIR ${RXCPP_DIR}/Rx/CPP/test)
 
 include_directories(${RXCPP_DIR}/Ix/CPP/src ${RXCPP_DIR}/Rx/CPP/src)
 
-# define the sources of testbench
-set(TESTBENCH_SOURCES
+# define the sources of rx testbench
+set(RX_TESTBENCH_SOURCES
     ${RXCPP_DIR}/Rx/CPP/testbench/testbench.cpp
 )
-add_executable(testbench ${TESTBENCH_SOURCES})
+add_executable(testbench ${RX_TESTBENCH_SOURCES})
+
+# define the sources of ix testbench
+set(IX_TESTBENCH_SOURCES
+    ${RXCPP_DIR}/Ix/CPP/unittest/testbench.cpp
+)
+add_executable(unittest ${IX_TESTBENCH_SOURCES})

@@ -54,6 +54,7 @@
 
 
 namespace cpplinq { 
+    using std::ptrdiff_t;
 
     // used to identify cursor-based collections
     struct collection_tag {};
