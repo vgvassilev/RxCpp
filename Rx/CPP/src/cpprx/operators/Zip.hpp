@@ -165,11 +165,11 @@ namespace rxcpp
             Queues queues;
             bool isStopped;
         };
-        State::Sources sources(source...);
+        typename State::Sources sources(source...);
         // bug on osx prevents using make_shared 
         std::shared_ptr<State> state(new State(std::move(selector)));
-        return CreateObservable<State::result_type>(
-            [=](std::shared_ptr<Observer<State::result_type>> observer) -> Disposable
+        return CreateObservable<typename State::result_type>(
+            [=](std::shared_ptr<Observer<typename State::result_type>> observer) -> Disposable
             {
                 ComposableDisposable cd;
                 cd.Add(Disposable([state](){state->isStopped = true;}));
@@ -200,11 +200,11 @@ namespace rxcpp
             Queues queues;
             bool isStopped;
         };
-        State::Sources sources(source1, source2);
+        typename State::Sources sources(source1, source2);
         // bug on osx prevents using make_shared 
         std::shared_ptr<State> state(new State(std::move(selector)));
-        return CreateObservable<State::result_type>(
-            [=](std::shared_ptr<Observer<State::result_type>> observer) -> Disposable
+        return CreateObservable<typename State::result_type>(
+            [=](std::shared_ptr<Observer<typename State::result_type>> observer) -> Disposable
             {
                 ComposableDisposable cd;
                 detail::ZipSubscriber<0, State::SourcesSize::value, State>::subscribe(cd, observer, state, sources);

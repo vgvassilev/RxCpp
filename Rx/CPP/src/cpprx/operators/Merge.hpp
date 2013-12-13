@@ -69,11 +69,11 @@ namespace rxcpp
             {}
             std::atomic<size_t> pendingComplete;
         };
-        State::Sources sources(firstSource, otherSource...);
+        typename State::Sources sources(firstSource, otherSource...);
         // bug on osx prevents using make_shared
         std::shared_ptr<State> state(new State());
-        return CreateObservable<State::result_type>(
-            [=](std::shared_ptr<Observer<State::result_type>> observer) -> Disposable
+        return CreateObservable<typename State::result_type>(
+            [=](std::shared_ptr<Observer<typename State::result_type>> observer) -> Disposable
             {
                 ComposableDisposable cd;
                 detail::MergeSubscriber<0, State::SourcesSize::value, State>::subscribe(cd, observer, state, sources);
@@ -96,11 +96,11 @@ namespace rxcpp
             {}
             std::atomic<size_t> pendingComplete;
         };
-        State::Sources sources(firstSource, otherSource);
+        typename State::Sources sources(firstSource, otherSource);
         // bug on osx prevents using make_shared
         std::shared_ptr<State> state(new State());
-        return CreateObservable<State::result_type>(
-            [=](std::shared_ptr<Observer<State::result_type>> observer) -> Disposable
+        return CreateObservable<typename State::result_type>(
+            [=](std::shared_ptr<Observer<typename State::result_type>> observer) -> Disposable
             {
                 ComposableDisposable cd;
                 detail::MergeSubscriber<0, State::SourcesSize::value, State>::subscribe(cd, observer, state, sources);

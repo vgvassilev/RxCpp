@@ -26,7 +26,7 @@ namespace rxcpp
                     };
                 };
                 // keep count of remaining OnNext calls to skip and state.
-                auto remaining = std::make_shared<std::tuple<std::atomic<Integral>, std::atomic<typename State::type>>>(n, State::Skipping);
+                auto remaining = std::make_shared<std::tuple<Integral, typename State::type>>(n, State::Skipping);
 
                 ComposableDisposable cd;
 
@@ -88,7 +88,7 @@ namespace rxcpp
                 cd.Add(Subscribe(
                     terminus,
                 // on next
-                    [=](const U& element)
+                    [=](const U& )
                     {
                         state->skipState = SkipState::Taking;
                     },
@@ -98,7 +98,7 @@ namespace rxcpp
                         state->skipState = SkipState::Taking;
                     },
                 // on error
-                    [=](const std::exception_ptr& error)
+                    [=](const std::exception_ptr& )
                     {
                         state->skipState = SkipState::Taking;
                     }));
