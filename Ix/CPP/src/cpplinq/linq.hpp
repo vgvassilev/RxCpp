@@ -469,7 +469,10 @@ public:
 
     // TODO: skip_while(pred)
 
-    // TODO: sum
+    reference_type sum() const
+    {
+       return std::accumulate(begin(), end(), reference_type());
+    }
 
     linq_driver<linq_take<Collection>> take(size_t n) const {
         return linq_take<Collection>(c, n);
