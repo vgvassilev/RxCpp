@@ -150,23 +150,22 @@ void Zad2() {
    TFile *myFile = TFile::Open("DataModel/eventdata_s99.root");
    TTreeReader tree("tree", myFile);
    TTreeReaderArray<Particle> particles(tree, "fParticles");
-
    using namespace cpplinq;
    auto PosPtSum =
       from(tree).select([&](Long64_t entry) {
-            tree.Next();
             return from(particles)
-            .where([](const Particle& p) { return p.fCharge > 0; })
-            .select([](const Particle& p) { return p.fVector.Pt(); })
-            .sum();
+            .where([&](const Particle& p) { return p.fCharge > 0; })
+            .select([&](const Particle& p) {return p.fVector.Pt(); }).sum();
          });
-   ///printf("Size:%lu\n", PosPtSum.size());
    auto h = new TH1F("ptSum", "Sum p_T of events; p_T [GeV]", 200, 0, 500);
+   from(PosPtSum).all([&h](double pt){h->Fill(pt); return true;});
+   //printf("Size:%lu\n", PosPtSum.size());
    for (auto pt : PosPtSum) {
-      h->Fill(pt);
+      //h->Fill(pt);
       printf("val: %f\n", pt);
    }
    h->Draw();
+   printf("Entries in hist: %d\n", (int)h->GetEntries());
 
 
    // double NegPtSum =
@@ -177,7 +176,7 @@ void Zad2() {
    //                return p.fVector.Pt();
    //             }).sum();
    //       }).sum();
-   delete myFile;
+   //delete myFile;
    // printf("Positive PT Sum=%f, and negative PT Sum=%f\n", PosPtSum, NegPtSum);
 }
 
